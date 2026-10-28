@@ -1,0 +1,36 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+
+eureka:
+  instance:
+    # Prefer IP address over hostname when registering with Eureka (crucial for Docker/K8s/cloud networks)
+    prefer-ip-address: true
+    # Unique instance ID to distinguish multiple replicas running on same host or containers
+    instance-id: ${spring.application.name}:${server.port}:${random.value}
+    # Heartbeat interval in seconds sent to Eureka Server (default: 30s; 10s is optimal for development/faster detection)
+    lease-renewal-interval-in-seconds: 10
+    # Time Eureka server waits without a heartbeat before evicting this instance (default: 90s)
+    lease-expiration-duration-in-seconds: 30
+  client:
+    # URL of the Netflix Eureka Discovery Server registry
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    # Register this service with the Eureka discovery registry
+    register-with-eureka: true
+    # Fetch registry information periodically for client-side load balancing
+    fetch-registry: true
+    # Registry cache refresh interval in seconds
+    registry-fetch-interval-seconds: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

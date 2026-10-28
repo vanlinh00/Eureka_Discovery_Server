@@ -1,0 +1,45 @@
+server:
+  # Dynamic ephemeral port allocation: 0 prompts the OS to assign an available port
+  port: 0
+
+spring:
+  application:
+    name: order-service
+
+eureka:
+  instance:
+    # Prefer IP address over container hostname (vital for Docker/cloud networks)
+    prefer-ip-address: true
+    # Unique instance ID prevents collisions when running multiple replicas with dynamic ports
+    instance-id: ${spring.application.name}:${server.port}:${random.value}
+    # Heartbeat interval sent to Eureka Discovery Server
+    lease-renewal-interval-in-seconds: 10
+    # Lease expiration window if server stops receiving heartbeats
+    lease-expiration-duration-in-seconds: 30
+  client:
+    # Netflix Eureka Discovery Server registry location
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    # Register with Eureka server on startup
+    register-with-eureka: true
+    # Cache and fetch remote registry for client-side load balancing
+    fetch-registry: true
+    registry-fetch-interval-seconds: 10
+
+# OpenFeign Client configuration
+spring.cloud.openfeign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

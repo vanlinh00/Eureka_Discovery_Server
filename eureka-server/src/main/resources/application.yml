@@ -1,0 +1,33 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # Do not register this server instance as a client service with Eureka
+    register-with-eureka: false
+    # Do not fetch registry from peer servers (standalone configuration)
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+  server:
+    # Wait time in ms before renewal threshold calculation starts (default: 5 mins)
+    wait-time-in-ms-when-sync-empty: 0
+    # Enable self-preservation to protect registry data during network partitions
+    enable-self-preservation: true
+    # Frequency with which the eviction task scans for expired client leases
+    eviction-interval-timer-in-ms: 60000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
